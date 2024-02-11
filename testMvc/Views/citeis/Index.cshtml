@@ -1,0 +1,88 @@
+﻿
+@model PagedList.IPagedList<testMvc.Models.citeis>
+@{
+    ViewBag.Title = "Index";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<div dir="rtl">
+    <h2>רשימת ערים</h2>
+
+
+    <a href="@Url.Action("Create", "citeis" )" class="btn btn-primary">
+        <span class="fas fa-plus-circle"></span>
+    </a>
+    @using (Html.BeginForm())
+    {
+        <p>
+             @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+            <button class="btn btn-primary" type="submit" id="saveTeststeps" value="Search">
+                <i class="fa fa-search"></i>
+            </button>
+
+        </p>
+    }
+
+
+    <table class="table table-striped">
+        <tr>
+            <th>
+                @Html.Label("שם עיר", ViewBag.CurrentFilter as string)
+            </th>
+            <th>
+                <i class="fas fa-plus"></i> <!-- This will display a home icon -->
+            </th>
+        </tr>
+
+        @Html.ActionLink("ASC", "Index", new { page = ViewBag.CurrentPage, sortOrder = "ASC", currentFilter = ViewBag.CurrentFilter })
+        <div style="width: 20px;display: inline-block"></div>
+        @Html.ActionLink("DESC", "Index", new { page = ViewBag.CurrentPage, sortOrder = "DESC", currentFilter = ViewBag.CurrentFilter })
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.name)
+                </td>
+                <td>
+                    <a href="@Url.Action("Details", "citeis", new { id = item.id } )" class="btn btn-primary">
+                        <span class="fas fa-edit"></span>
+                    </a>
+                    <a href="@Url.Action("Delete", "citeis", new { id = item.id } )" class="btn btn-danger">
+                        <span class="fas fa-trash"></span>
+                    </a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+        <div>
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber)
+            of @Model.PageCount
+
+            @if (Model.HasPreviousPage)
+            {
+                @Html.ActionLink("<<", "Index", new { page = 1, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })
+                @Html.Raw(" ");
+                @Html.ActionLink("< Prev", "Index", new { page = Model.PageNumber - 1, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })
+            }
+            else
+            {
+                @:<<
+                @Html.Raw(" ");
+                @:< Prev
+            }
+
+            @if (Model.HasNextPage)
+            {
+                @Html.ActionLink("Next >", "Index", new { page = Model.PageNumber + 1, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })
+                @Html.Raw(" ");
+                @Html.ActionLink(">>", "Index", new { page = Model.PageCount, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })
+            }
+            else
+            {
+                @:Next >
+                @Html.Raw(" ")
+                @:>>
+            }
+        </div>
+
